@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ws页面</title>
+    <script src="jquery-3.2.1.js"></script>
+</head>
+<body>
+<input type="text" placeholder="请输入您的昵称" id="nickname"><input type="button" value="连接" id="btnClick1">
+</div>
+<div id="resultDiv"></div>
+<div><input type="text" id="msg"><input type="button" value="发送" id="btnClick2" disabled="disabled"></div>
+<script>
+    var webSocket;
+    $("#btnClick2").click(function () {
+        var msg = $("#msg").val();
+        $("#msg").val('');
+        webSocket.send(msg)
+    });
+    $("#btnClick1").click(function () {
+        var nickname = $("#nickname").val();
+        if(nickname==null||nickname=='') {
+            alert("必须输入昵称");
+            return;
+        }
+        $("#btnClick2").removeAttr("disabled");
+        $(this).attr("disabled", "disabled");
+        $("#resultDiv").append("<p>开始连接服务端!</p>");
+        webSocket = new WebSocket("ws://localhost:8080/myws2/"+nickname);
+        webSocket.onerror = function (event) {
+            $("#resultDiv").append("<p>onerror:" + event.data + "</p>");
+        }
+        webSocket.onopen = function (event) {
+            $("#resultDiv").append("<p>连接成功！</p>");
+        }
+        webSocket.onmessage = function (event) {
+            $("#resultDiv").append("<p>" + event.data + "</p>");
+        }
+    });
+</script>
+</body>
+</html>
